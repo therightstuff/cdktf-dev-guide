@@ -3,12 +3,12 @@ import { AppStack } from "./lib/AppStack";
 import { StateStack } from "./lib/StateStack";
 
 const STACK_STATE_NAME = "cdktf-state";
-const APP_NAME = "my-app";
-
 
 const app = new App();
 
 new StateStack(app, STACK_STATE_NAME);
-new AppStack(app, APP_NAME);
+new AppStack(app, "sample-app", {
+  region: "eu-north-1",
+});
 
 app.synth();

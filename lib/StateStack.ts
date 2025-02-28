@@ -5,9 +5,12 @@ import { DynamodbTable } from "@cdktf/provider-aws/lib/dynamodb-table";
 import { AwsProvider } from "@cdktf/provider-aws/lib/provider";
 import { S3BucketServerSideEncryptionConfigurationA } from "@cdktf/provider-aws/lib/s3-bucket-server-side-encryption-configuration";
 import { S3BucketVersioningA } from "@cdktf/provider-aws/lib/s3-bucket-versioning";
+import { S3Backend } from "cdktf";
 
+const REGION = "us-east-1";
 // This is used to create a unique ID for the S3 bucket which must be unique across all AWS accounts
 const UNIQUE_ID_ELEMENT = "therightstuff";
+
 export const DYNAMO_DB_TABLE_NAME = "terraform-state-lock";
 export const STATE_BUCKET_NAME = `terraform-state-bucket-${UNIQUE_ID_ELEMENT}`;
 
@@ -17,7 +20,7 @@ export class StateStack extends TerraformStack {
   
       // Configure AWS provider for this stack
       new AwsProvider(this, "AWS", {
-        region: "us-east-1",
+        region: REGION,
         // profile: "CDKTF"
       });
 
@@ -58,4 +61,16 @@ export class StateStack extends TerraformStack {
     }
   }
   
-  
+  export function useS3Backend(stack: TerraformStack, appName: string, profile?: string) {
+    const s3BackendOptions: any = {
+      bucket: STATE_BUCKET_NAME,
+      key: `${appName}/terraform.tfstate`,
+      region: REGION,
+      encrypt: true,
+      dynamodbTable: DYNAMO_DB_TABLE_NAME,
+    };
+    if (profile) {
+      s3BackendOptions.profile = profile;
+    }
+    new S3Backend(stack, s3BackendOptions);
+  }
