@@ -10,7 +10,8 @@ I tried to provide instructions for configuring this repo both for MacOS (easy) 
 with the Windows setup ([chocolatey](https://chocolatey.org/) is not my friend) that I gave up and added a Linux devcontainer
 instead. Let's all just use devcontainers. All your prerequisite tools will be installed when you open this one.
 
-(Note: for MacOS, all prerequisites are available via [Homebrew](https://brew.sh/))
+(Note: for MacOS, all prerequisites are available via [Homebrew](https://brew.sh/), but I recommend using the devcontainer anyway
+for consistency)
 
 - Node.js (v18.x or higher)
 - AWS account
@@ -34,8 +35,8 @@ instead. Let's all just use devcontainers. All your prerequisite tools will be i
 To set up a terraform state backend, create a new stack for the state resources, or manually create the resources yourself.
 For AWS, this will include an S3 bucket and a DynamoDB table.
 
-If you want to create the backend resources using `cdktf`, bear in mind that you won't be able to modify those resources
-from a different machine than the one they were created from.
+If you want to create the backend resources using `cdktf`, bear in mind that you won't be able to easily modify those
+resources from a different machine than the one they were created on.
 
 Once the state resources are created:
 
@@ -53,6 +54,7 @@ Once the state resources are created:
 
 1. Clone the repository
 1. Run `npm install` to install the dependencies
+1. Change the unique part of the S3 bucket name (`UNIQUE_ID_ELEMENT`) in [StateStack.ts](lib/StateStack.ts)
 1. Run `npm run synth` to synthesize the project's stacks
 1. Run `cdktf deploy cdktf-state` to deploy the terraform state backend stack
 1. Run `cdktf deploy my-app` to deploy the app stack
